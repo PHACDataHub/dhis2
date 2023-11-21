@@ -47,9 +47,6 @@ spec:
           name: db
           ports:
             - containerPort: 5432
-              hostIP: 127.0.0.1
-              hostPort: 5432
-              protocol: TCP
           resources: {}
       restartPolicy: Always
 status: {}

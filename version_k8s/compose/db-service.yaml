@@ -12,8 +12,10 @@ metadata:
 spec:
   ports:
     - name: "5432"
+      protocol: TCP
       port: 5432
       targetPort: 5432
+  type: NodePort
   selector:
     io.kompose.service: db
 status:
