@@ -17,10 +17,8 @@ services:
       - "8080:8080"
 
   web:
-    # dhis2/core:2.39.1.2
-    # image: "dhis2/core-dev:latest"
-    image: "${DHIS2_IMAGE:-dhis2/core:2.40.0.1}"
-    # image: "${DHIS2_IMAGE:-dhis2/core-dev:local}"
+    # image: "${DHIS2_IMAGE:-dhis2/core:2.40.0.1}"
+    image: "${DHIS2_IMAGE:-dhis2/core-dev:2.40}"
     # No need to expose ports, as we are using a reverse proxy, even for local port 8080
     ports:
       - 8080:8080 # DHIS2
