@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: dhis2/core-dev:2.40
+          ports:
+            - containerPort: 8080
+            - containerPort: 8081
+            - containerPort: 9010
+          env:
+            - name: JAVA_OPTS
+              value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8081 -Dlog4j2.configurationFile=/opt/dhis2/log4j2.xml -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/dhis2/dhis.conf
+              subPath: dhis.conf
+              readOnly: true
+            - name: log4j2-volume
+              mountPath: /opt/dhis2/log4j2.xml
+              subPath: log4j2.xml
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: web-config
+        - name: log4j2-volume
+          configMap:
+            name: web-log4j2

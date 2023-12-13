@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+data:
+  dhis.conf: |
+    connection.dialect = org.hibernate.dialect.PostgreSQLDialect
+    connection.driver_class = org.postgresql.Driver
+    connection.url = jdbc:postgresql://db-service/dhis
+    connection.username = dhis
+    connection.password = dhis
+    tracker.import.preheat.cache.enabled=off
