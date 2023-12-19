@@ -1,0 +1,9 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Backup
+metadata:
+  name: dhis2-postgis16-cluster-backup
+  namespace: dhis2
+spec:
+  cluster:
+    name: dhis2-postgis16-cluster
+    

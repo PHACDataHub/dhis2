@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-deployment
+  namespace: dhis2
 spec:
   replicas: 1
   selector:
@@ -11,10 +12,13 @@ spec:
     metadata:
       labels:
         app: web
+      annotations:
+        proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
     spec:
       containers:
         - name: web
-          image: dhis2/core-dev:2.40
+          image: dhis2/core-dev:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
             - containerPort: 8081
@@ -22,6 +26,16 @@ spec:
           env:
             - name: JAVA_OPTS
               value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8081 -Dlog4j2.configurationFile=/opt/dhis2/log4j2.xml -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dhis2-postgis16-cluster-app
+                  key: password
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dhis2-postgis16-cluster-app
+                  key: username
           volumeMounts:
             - name: config-volume
               mountPath: /opt/dhis2/dhis.conf

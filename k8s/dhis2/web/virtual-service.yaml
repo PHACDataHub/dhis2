@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: dhis2-virtual-service
+  namespace: dhis2
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - istio-ingress/public-gateway
+  http:
+  - name: gateway-to-server
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: web-service.dhis2.svc.cluster.local
+        port:
+          number: 8080

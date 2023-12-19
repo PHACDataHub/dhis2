@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: web-log4j2
+  namespace: dhis2
 data:
   log4j2.xml: |
     <?xml version="1.0" encoding="UTF-8"?>

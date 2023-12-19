@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: web-service
+  namespace: dhis2
 spec:
   type: ClusterIP
   selector:
