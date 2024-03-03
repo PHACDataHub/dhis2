@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-log4j2
+  namespace: dhis2
+data:
+  log4j2.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="WARN" monitorInterval="10">
+        <Properties>
+            <Property name="layout">%-5level %c [%t] %msg%n</Property>
+        </Properties>
+
+        <Appenders>
+            <Console name="console" target="SYSTEM_OUT">
+                <PatternLayout pattern="${layout}" />
+            </Console>
+        </Appenders>
+
+        <Loggers>
+            <Logger name="org.hisp.dhis" level="INFO" additivity="true"/>
+
+            <Root level="WARN">
+                <AppenderRef ref="console"/>
+            </Root>
+        </Loggers>
+    </Configuration>

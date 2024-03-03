@@ -1,3 +1,4 @@
 PulumiState/
 node_modules/
 .vscode/
+k8s/dhis2/db
