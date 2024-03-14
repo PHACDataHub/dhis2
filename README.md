@@ -1,6 +1,7 @@
 # DHIS2 Demo
 
 This captures the steps required to run a local copy of DHIS2.
+k8s set up -> https://github.com/PHACDataHub/dhis-2
 
 ## empty the database with out deleting it
 ```bash
