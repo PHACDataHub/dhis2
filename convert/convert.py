@@ -1,8 +1,8 @@
-#!/opt/miniconda3/bin/python 
 import pandas as pd
 import json
 import csv
 import os
+import numpy as np
 
 # Function to create folder if it doesn't exist
 def create_folder(folder_path):
@@ -23,6 +23,18 @@ def find_key_csv(input_path):
         print("Key CSV file not found.")
         return None
 
+# fill in the key gap
+def fill_key(df):
+    df[df["Keys"]==""] = np.nan
+    df["Keys"].fillna(method='ffill', inplace=True)
+    return df
+
+# drop empty value column to reduce df size
+def drop_col(df):
+    nan_value = float("NaN") 
+    df.replace("", nan_value, inplace=True) 
+    df.dropna(how='all', axis=1, inplace=True) 
+    return df
 
 def json_to_csv(input_path, output_path):
     with open(input_path) as json_file:
@@ -34,37 +46,28 @@ def json_to_csv(input_path, output_path):
         entry = pd.json_normalize(data[k])
         df = df._append(entry, ignore_index = True)
         df.at[len(df)-1, "Keys"] = k
+    update_df = fill_key(df)
     
     # Write DataFrame to CSV
     csv_filename = os.path.splitext(os.path.basename(output_path))[0]
-    df.to_csv(output_path, index=False)
+    update_df.to_csv(output_path, index=False)
     print(f"Write to {output_path} completed.")
-    print(df.shape)
-    
-    # Write keys list to CSV
-    keys_df = pd.DataFrame(keys, columns=["Keys"])
-    keys_csv_path = os.path.join(os.path.dirname(output_path), f"{csv_filename}_keys.csv")
-    keys_df.to_csv(keys_csv_path, index=False)
-    print(f"Write to {keys_csv_path} completed.")
-    print(keys_df.shape)
 
-
-def csv_to_json(csv_path, keys_csv_path, output_path):
+def csv_to_json(csv_path, output_path):
    # Read CSV file
-    df = pd.read_csv(csv_path)
-    
-    # Read keys CSV file
-    keys_df = pd.read_csv(keys_csv_path)
-    keys = keys_df['Keys'].tolist()
-    
+    df = pd.read_csv(csv_path) 
     # Construct JSON data
     json_data = {}
-    for key in keys:
-        json_data[key] = df[key].apply(lambda x: json.loads(x) if isinstance(x, str) else x).to_list()
-    
+    # sort csv by Keys
+    key_group = df.groupby(["Keys"])
+    for key in key_group.groups:
+        j_df = (df.loc[key_group.groups[key]]).drop(columns=['Keys'])
+        update_j_df = drop_col(j_df)
+        # j = update_j_df.to_json(orient="records")
+        json_data[key] = update_j_df
     # Write JSON data to file
     with open(output_path, 'w') as json_file:
-        json.dump(json_data, json_file, indent=4)
+        json.dumps(json_data, json_file, indent=4)
     
     print(f"Conversion from CSV to JSON completed. JSON file saved at {output_path}")
 
@@ -78,8 +81,8 @@ def main(input_path, output_path):
         output_file = os.path.join(output_path, f"{base_name}_output.json" if ext.lower() == ".csv" else f"{base_name}_output.csv")
         
         if ext.lower() == ".csv":
-            key = find_key_csv(file)
-            csv_to_json(file, key, output_file)
+            # key = find_key_csv(file)
+            csv_to_json(file, output_file)
         elif ext.lower() == ".json":
             json_to_csv(file, output_file)
         else:

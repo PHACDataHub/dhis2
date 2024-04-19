@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["DHIS", "rrdatas"]
+  "cSpell.words": ["DHIS", "rrdatas"],
+  "python.testing.cwd": "${workspaceFolder}"
 }
