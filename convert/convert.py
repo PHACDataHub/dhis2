@@ -63,12 +63,11 @@ def csv_to_json(csv_path, output_path):
     for key in key_group.groups:
         j_df = (df.loc[key_group.groups[key]]).drop(columns=['Keys'])
         update_j_df = drop_col(j_df)
-        # j = update_j_df.to_json(orient="records")
         j = update_j_df.to_dict('records')
-        json_data[key] = update_j_df
+        json_data[key] = j
     # Write JSON data to file
     with open(output_path, 'w') as json_file:
-        json.dumps(json_data, json_file, indent=4)
+        json.dump(json_data, json_file, indent=4)
     
     print(f"Conversion from CSV to JSON completed. JSON file saved at {output_path}")
 
